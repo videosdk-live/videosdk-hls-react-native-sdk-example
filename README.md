@@ -48,7 +48,7 @@ At Video SDK, we’re building tools to help companies create world-class collab
 Clone the repository to your local environment.
 
 ```
-git clone https://github.com/videosdk-live/videosdk-hls-flutter-sdk-example.git
+git clone https://github.com/videosdk-live/videosdk-hls-react-native-sdk-example.git
 ```
 
 ### Step 2: Modify `src/api/api.js` file
