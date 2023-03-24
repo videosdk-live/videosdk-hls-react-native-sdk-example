@@ -465,10 +465,10 @@ src
 
 ```
  home
-	└── speaker
-		└── index.js
-	└── viewer
-		└── index.js
+   └── speaker
+	└── index.js
+   └── viewer
+	└── index.js
     └── index.js
 ```
 
@@ -506,11 +506,11 @@ src
 
 ```
  ILS
-	└── Components
-	└── Speaker
-	└── Viewer
-	└── index.js
-	└── ILSContainer.js
+  └── Components
+  └── Speaker
+  └── Viewer
+  └── index.js
+  └── ILSContainer.js
 ```
 
 - `ILS/index.js` : This file essentially initialise the meeting depending on the config given.
@@ -580,11 +580,11 @@ The whole user interface and business logic for the `SPEAKER` are contained in t
 
 ```
 Speaker
-	└── MeetingViewer.js
-	└── ParticipantGrid.js
-	└── ParticipantView.js
-	└── PauseInvisibleParticipant.js
-	└── RemoteParticipantPresenter.js
+  └── MeetingViewer.js
+  └── ParticipantGrid.js
+  └── ParticipantView.js
+  └── PauseInvisibleParticipant.js
+  └── RemoteParticipantPresenter.js
 ```
 
 #### MeetingViewer.js
@@ -621,8 +621,8 @@ The whole user interface and business logic for the `VIEWER` are contained in th
 
 ```
 Viewer
-	└── ViewerContainer.js
-	└── ControlsOverlay.js
+  └── ViewerContainer.js
+  └── ControlsOverlay.js
 ```
 
 #### ViewerContainer.js
