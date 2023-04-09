@@ -386,6 +386,8 @@ const onPress = () => {
 By registering callback handlers, VideoSDK sends callbacks to the client app whenever there is a change or update in the meeting after a user joins.
 
 ```js
+import { Constants, useMeeting } from "@videosdk.live/react-native-sdk";
+
 function onParticipantJoined(participant) {
   // This event will be emitted when a new participant joined the meeting.
   // [participant]: new participant who joined the meeting
@@ -415,6 +417,26 @@ function onMeetingLeft() {
   console.log('onMeetingLeft');
 }
 
+function onHlsStateChanged(data) {
+   const { status } = data;
+
+  if (status === Constants.hlsEvents.HLS_STARTING) {
+    console.log("Meeting Hls is starting");
+  } else if (status === Constants.hlsEvents.HLS_STARTED) {
+    console.log("Meeting Hls is started");
+  } else if (status === Constants.hlsEvents.HLS_PLAYABLE) {
+    // on hlsStateChanged started you will receive downstreamUrl
+    const {downstreamUrl}=data;
+    console.log("Meeting Hls is playable");
+  } else if (status === Constants.hlsEvents.HLS_STOPPING) {
+    console.log("Meeting Hls is stopping");
+  } else if (status === Constants.hlsEvents.HLS_STOPPED) {
+    console.log("Meeting Hls is stopped");
+  } else {
+    //
+  }
+ }
+
 const {meetingId, meeting, localParticipant} = useMeeting({
   onParticipantJoined,
   onParticipantLeft,
@@ -422,6 +444,7 @@ const {meetingId, meeting, localParticipant} = useMeeting({
   onPresenterChanged,
   onMeetingJoined,
   onMeetingLeft,
+  onHlsStateChanged,
 });
 ```
 
