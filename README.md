@@ -10,6 +10,12 @@
 
 At Video SDK, we’re building tools to help companies create world-class collaborative products with capabilities of live audio/videos, compose cloud recordings/RTMP/HLS and interaction APIs.
 
+## Demo App
+
+📲 Download the sample iOS app here: https://testflight.apple.com/join/8hUKvpwT
+
+📱 Download the sample Android app here: https://appdistribution.firebase.dev/i/9e63ac73eb4f49c3
+
 ## Interactive Livestream (HLS)
 
 - Interactive live stream (HLS) is a media streaming protocol for delivering visual and audio media to viewers over the internet.
