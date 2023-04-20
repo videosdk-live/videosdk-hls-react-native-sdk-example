@@ -11,23 +11,7 @@ import Orientation from 'react-native-orientation-locker';
 
 export default function ILSContainer({webcamEnabled}) {
   const [isJoined, setJoined] = useState(false);
-  const [downStreamUrl, setDownstreamUrl] = useState(null);
-  const [isStoppedHls, setisStoppedHls] = useState(false);
   const [localParticipantMode, setlocalParticipantMode] = useState(null);
-
-  const _handleOnHlsStateChanged = data => {
-    switch (data.status) {
-      case 'HLS_STARTED':
-        setDownstreamUrl(data.downstreamUrl);
-        break;
-      case 'HLS_STOPPED':
-        setisStoppedHls(true);
-        break;
-      default:
-        setDownstreamUrl(null);
-        setisStoppedHls(false);
-    }
-  };
 
   const mMeeting = useMeeting({});
 
@@ -39,7 +23,6 @@ export default function ILSContainer({webcamEnabled}) {
 
   const {join, changeWebcam, leave, participants, localParticipant} =
     useMeeting({
-      onHlsStateChanged: _handleOnHlsStateChanged,
       onParticipantModeChanged: ({mode, participantId}) => {
         const localParticipant = mMeetingRef.current?.localParticipant;
         if (participantId === localParticipant.id) {
@@ -92,9 +75,7 @@ export default function ILSContainer({webcamEnabled}) {
       <MeetingViewer setlocalParticipantMode={setlocalParticipantMode} />
     ) : (
       <ViewerContainer
-        downStreamUrl={downStreamUrl}
         localParticipantId={localParticipant.id}
-        isStoppedHls={isStoppedHls}
         setlocalParticipantMode={setlocalParticipantMode}
       />
     )

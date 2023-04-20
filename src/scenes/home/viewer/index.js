@@ -15,7 +15,7 @@ import {getToken} from '../../../api/api';
 
 export default function Viewer_Home({navigation}) {
   const [name, setName] = useState('');
-  const [meetingId, setMeetingId] = useState('');
+  const [meetingId, setMeetingId] = useState('lv95-q3kl-p544');
   const [token, setToken] = useState('');
 
   React.useEffect(async () => {

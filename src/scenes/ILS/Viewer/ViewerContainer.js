@@ -19,19 +19,16 @@ import ControlsOverlay from './ControlsOverlay';
 import {useNavigation} from '@react-navigation/native';
 
 export default function ViewerContainer({
-  downStreamUrl,
-  isStoppedHls,
   localParticipantId,
   setlocalParticipantMode,
 }) {
   const navigation = useNavigation();
-  const {changeMode, leave} = useMeeting();
+  const {changeMode, leave, hlsState, hlsUrls} = useMeeting();
   const deviceOrientation = useOrientation();
   const [progress, setProgrss] = useState(0);
   const [playableDuration, setplayableDuration] = useState(0);
 
   const [isChatVisible, setisChatVisible] = useState(false);
-  const [canPlay, setCanPlay] = useState(false);
   const [pause, setPause] = useState(false);
 
   const videoPlayer = useRef(null);
@@ -42,14 +39,6 @@ export default function ViewerContainer({
       typeof videoPlayer.current.seek === 'function' &&
       videoPlayer.current.seek(sec);
   };
-
-  useEffect(() => {
-    if (downStreamUrl) {
-      setTimeout(() => {
-        setCanPlay(true);
-      }, 10000);
-    }
-  }, [downStreamUrl]);
 
   usePubSub(`CHANGE_MODE_${localParticipantId}`, {
     onMessageReceived: data => {
@@ -93,7 +82,7 @@ export default function ViewerContainer({
           <Video
             ref={videoPlayer}
             source={{
-              uri: downStreamUrl,
+              uri: hlsUrls.downstreamUrl,
             }} // Can be a URL or a local file.
             style={{
               flex: 1,
@@ -145,7 +134,7 @@ export default function ViewerContainer({
           <Video
             ref={videoPlayer}
             source={{
-              uri: downStreamUrl,
+              uri: hlsUrls.downstreamUrl,
             }} // Can be a URL or a local file.
             style={{
               flex: 1,
@@ -291,14 +280,12 @@ export default function ViewerContainer({
         backgroundColor: '#2B3034',
         flexDirection: deviceOrientation === 'PORTRAIT' ? 'column' : 'row',
       }}>
-      {canPlay && downStreamUrl && !isStoppedHls ? (
+      {hlsState == 'HLS_PLAYABLE' ? (
         deviceOrientation === 'PORTRAIT' ? (
           PortraitView()
         ) : (
           LandscapeView()
         )
-      ) : isStoppedHls ? (
-        <StopLiveStreamScreen />
       ) : (
         <WaitingScreen />
       )}

@@ -151,14 +151,13 @@ export default function MeetingViewer({setlocalParticipantMode}) {
     if (!hlsState || hlsState === 'HLS_STOPPED') {
       startHls({
         layout: {
-          type: 'GRID',
+          type: 'SPOTLIGHT',
           priority: 'PIN',
-          gridSize: 4,
         },
         theme: 'DARK',
         orientation: 'landscape',
       });
-    } else if (hlsState === 'HLS_STARTED') {
+    } else if (hlsState === 'HLS_PLAYABLE') {
       stopHls();
     }
   };
@@ -221,6 +220,7 @@ export default function MeetingViewer({setlocalParticipantMode}) {
         <View style={{flexDirection: 'row'}}>
           {hlsState === 'HLS_STARTED' ||
           hlsState === 'HLS_STOPPING' ||
+          hlsState === 'HLS_PLAYABLE' ||
           hlsState === 'HLS_STARTING' ? (
             <Blink ref={hlsRef} duration={500}>
               <TouchableOpacity
@@ -243,12 +243,14 @@ export default function MeetingViewer({setlocalParticipantMode}) {
                     color: colors.primary[100],
                   }}>
                   {hlsState === 'HLS_STARTED'
-                    ? `Live Started`
+                    ? `Live Starting`
                     : hlsState === 'HLS_STOPPING'
                     ? `Live Stopping`
                     : hlsState === 'HLS_STARTING'
                     ? `Live Starting`
-                    : `Go Live`}
+                    : hlsState === 'HLS_PLAYABLE'
+                    ? 'Stop Live'
+                    : null}
                 </Text>
               </TouchableOpacity>
             </Blink>
