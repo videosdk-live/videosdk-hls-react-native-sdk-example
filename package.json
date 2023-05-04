@@ -16,7 +16,7 @@
     "@videosdk.live/react-native-incallmanager": "^0.0.9",
     "@videosdk.live/react-native-sdk": "^0.0.46",
     "add": "^2.0.6",
-    "lottie-ios": "3.4.0",
+    "lottie-ios": "3.5.0",
     "lottie-react-native": "^5.1.4",
     "moment": "^2.29.4",
     "react": "18.2.0",
