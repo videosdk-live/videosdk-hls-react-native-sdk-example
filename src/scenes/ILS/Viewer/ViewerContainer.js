@@ -82,7 +82,7 @@ export default function ViewerContainer({
           <Video
             ref={videoPlayer}
             source={{
-              uri: hlsUrls.downstreamUrl,
+              uri: hlsUrls.playbackHlsUrl,
             }} // Can be a URL or a local file.
             style={{
               flex: 1,
@@ -134,7 +134,7 @@ export default function ViewerContainer({
           <Video
             ref={videoPlayer}
             source={{
-              uri: hlsUrls.downstreamUrl,
+              uri: hlsUrls.playbackHlsUrl,
             }} // Can be a URL or a local file.
             style={{
               flex: 1,
