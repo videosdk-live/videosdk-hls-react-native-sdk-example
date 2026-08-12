@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import colors from '../../styles/colors';
 import {
   MeetingProvider,
@@ -11,14 +11,10 @@ import {SCREEN_NAMES} from '../../navigators/screenNames';
 export default function Meeting({navigation, route}) {
   const token = route.params.token;
   const meetingId = route.params.meetingId;
-  const micEnabled = route.params.micEnabled
-    ? route.params.webcamEnabled
-    : false;
-  const webcamEnabled = route.params.webcamEnabled
-    ? route.params.webcamEnabled
-    : false;
+  const micEnabled = !!route.params.micEnabled;
+  const webcamEnabled = !!route.params.webcamEnabled;
   const name = route.params.name ? route.params.name : 'Test User';
-  const mode = route.params.mode ? route.params.mode : 'CONFERENCE';
+  const mode = route.params.mode ? route.params.mode : 'SEND_AND_RECV';
 
   return (
     <SafeAreaView
@@ -26,14 +22,15 @@ export default function Meeting({navigation, route}) {
       <MeetingProvider
         config={{
           meetingId,
-          micEnabled: micEnabled,
-          webcamEnabled: webcamEnabled,
+          micEnabled,
+          webcamEnabled,
           name,
-          mode, // "CONFERENCE" || "VIEWER"
+          mode, // "SEND_AND_RECV" | "SIGNALLING_ONLY" | "RECV_ONLY"
           notification: {
             title: 'Video SDK Meeting',
             message: 'Meeting is running.',
           },
+          defaultCamera: 'front',
         }}
         token={token}>
         <MeetingConsumer

@@ -1,5 +1,6 @@
 import React from 'react';
-import {SafeAreaView, View, Text} from 'react-native';
+import {View, Text} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Button from '../../components/Button';
 import {SCREEN_NAMES} from '../../navigators/screenNames';
 import colors from '../../styles/colors';

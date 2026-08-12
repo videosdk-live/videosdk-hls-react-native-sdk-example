@@ -1,9 +1,9 @@
-import * as React from "react";
-import Svg, { Defs, G, Circle } from "react-native-svg";
+import * as React from 'react';
+import Svg, {Defs, G, Circle} from 'react-native-svg';
 
 function More(props) {
   return (
-    <Svg width={20} height={6} fill={"#FFF"} viewBox="0 0 16 4" {...props}>
+    <Svg width={20} height={6} fill={'#FFF'} viewBox="0 0 16 4" {...props}>
       <Defs></Defs>
       <G transform="translate(-303 -610)">
         <Circle

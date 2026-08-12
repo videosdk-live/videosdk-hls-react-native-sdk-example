@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Animated, View } from "react-native";
+import React, {Component} from 'react';
+import {Animated, View} from 'react-native';
 
 export default class Blink extends Component {
   constructor(props) {
@@ -17,7 +17,7 @@ export default class Blink extends Component {
           duration: this.props.duration,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
   }
 
@@ -32,8 +32,8 @@ export default class Blink extends Component {
 
   render() {
     return (
-      <View style={{ ...this.props.style }}>
-        <Animated.View style={{ opacity: this.fadeAnimation }}>
+      <View style={{...this.props.style}}>
+        <Animated.View style={{opacity: this.fadeAnimation}}>
           {this.props.children}
         </Animated.View>
       </View>

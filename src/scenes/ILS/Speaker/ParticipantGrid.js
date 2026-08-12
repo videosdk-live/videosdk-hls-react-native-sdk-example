@@ -7,19 +7,10 @@ import PauseInvisibleParticipants from './PauseInvisibleParticipant';
 
 const MemoizedParticipant = React.memo(
   ParticipantView,
-  (
-    {participantId, quality, key, openStatsBottomSheet},
-    {
-      participantId: oldParticipantId,
-      quality: oldQuality,
-      key: oldkey,
-      openStatsBottomSheet: oldopenStatsBottomSheet,
-    },
-  ) =>
-    participantId === oldParticipantId &&
-    quality === oldQuality &&
-    key === oldkey &&
-    openStatsBottomSheet === oldopenStatsBottomSheet,
+  (prev, next) =>
+    prev.participantId === next.participantId &&
+    prev.quality === next.quality &&
+    prev.openStatsBottomSheet === next.openStatsBottomSheet,
 );
 
 function ParticipantGrid({participantIds, isPresenting}) {
@@ -42,6 +33,7 @@ function ParticipantGrid({participantIds, isPresenting}) {
       {Array.from({length: Math.ceil(participantCount / perRow)}, (_, i) => {
         return (
           <View
+            key={`row_${i}`}
             style={{
               flex: 1,
               flexDirection: orientation == 'PORTRAIT' ? 'row' : 'column',

@@ -1,7 +1,6 @@
 import {RTCView, mediaDevices} from '@videosdk.live/react-native-sdk';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import {
   Keyboard,
   Clipboard,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {Copy, MicOff, MicOn, VideoOff, VideoOn} from '../../../assets/icons';
 import TextInputContainer from '../../../components/TextInputContainer';
 import Button from '../../../components/Button';
@@ -30,17 +30,23 @@ export default function Speaker_Home({navigation, route}) {
 
   const isCreator = route.params.isCreator;
 
-  React.useEffect(async () => {
+  useEffect(() => {
     navigation.setOptions({
       title: isCreator ? 'Create a meeting' : 'Join as a speaker',
     });
-    const token = await getToken();
-    setToken(token);
-    if (isCreator) {
-      const _meetingId = await createMeeting({token});
-      setMeetingId(_meetingId);
-    }
-  }, [navigation]);
+    (async () => {
+      try {
+        const t = await getToken();
+        setToken(t);
+        if (isCreator) {
+          const _meetingId = await createMeeting({token: t});
+          setMeetingId(_meetingId);
+        }
+      } catch (err) {
+        console.error('token/meeting bootstrap failed', err);
+      }
+    })();
+  }, [navigation, isCreator]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -72,7 +78,7 @@ export default function Speaker_Home({navigation, route}) {
       meetingId: meetingId,
       micEnabled: micOn,
       webcamEnabled: videoOn,
-      mode: 'CONFERENCE',
+      mode: 'SEND_AND_RECV',
     });
   };
 

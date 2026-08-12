@@ -8,8 +8,6 @@ import CallEnd from './CallEnd';
 import EndForAll from './EndForAll';
 import Leave from './Leave';
 import Participants from './Participants';
-import Recording from './Recording';
-import CameraSwitch from './CameraSwitch';
 import Copy from './Copy';
 import ScreenShare from './ScreenShare';
 import DownArrow from './DownArrow';
@@ -18,7 +16,6 @@ import More from './More';
 import RaiseHand from './RaiseHand';
 import Person from './Person';
 import Send from './Send';
-import NetworkIcon from './NetworkIcon';
 
 import Eye from './Eye';
 import FullScreen from './FullScreen';
@@ -38,7 +35,6 @@ export {
   VideoOff,
   VideoOn,
   CallEnd,
-  CameraSwitch,
   Copy,
   ScreenShare,
   DownArrow,
@@ -49,9 +45,7 @@ export {
   Send,
   EndForAll,
   Leave,
-  Recording,
   Participants,
-  NetworkIcon,
   FullScreen,
   Eye,
   Cancel,

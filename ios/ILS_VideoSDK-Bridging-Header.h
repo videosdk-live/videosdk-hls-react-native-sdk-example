@@ -3,3 +3,4 @@
 //
 
 #import "React/RCTEventEmitter.h"
+#import "Orientation.h"
