@@ -30,12 +30,11 @@ const ChatViewer = () => {
     if (!message) return;
     try {
       await mpubsub.publish(message, {persist: true});
+      setMessage('');
+      setTimeout(scrollToBottom, 100);
     } catch (err) {
       console.error('Failed to publish chat message:', err);
-    } finally {
-      setMessage('');
     }
-    setTimeout(scrollToBottom, 100);
   };
 
   return (

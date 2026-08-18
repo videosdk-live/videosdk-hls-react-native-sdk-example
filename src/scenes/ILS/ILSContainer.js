@@ -5,7 +5,7 @@ import WaitingToJoinView from './Components/WaitingToJoinView';
 import ViewerContainer from './Viewer/ViewerContainer';
 import Orientation from 'react-native-orientation-locker';
 
-export default function ILSContainer({webcamEnabled}) {
+export default function ILSContainer() {
   const [isJoined, setJoined] = useState(false);
   const [localParticipantMode, setlocalParticipantMode] = useState(null);
   const [pendingAction, setPendingAction] = useState(null);
@@ -26,7 +26,6 @@ export default function ILSContainer({webcamEnabled}) {
       if (!local || participantId !== local.id) return;
       try {
         if (mode === 'SEND_AND_RECV') {
-          Orientation.lockToPortrait();
           Orientation.unlockAllOrientations();
           await local.pin('CAM');
         } else {
@@ -77,7 +76,6 @@ export default function ILSContainer({webcamEnabled}) {
     return () => {
       clearTimeout(joinTimeout);
       Orientation.lockToPortrait();
-      Orientation.unlockAllOrientations();
       if (!joinedRef.current || hasLeftRef.current) return;
       (async () => {
         try {

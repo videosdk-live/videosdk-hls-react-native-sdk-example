@@ -40,7 +40,7 @@ export default function Meeting({navigation, route}) {
             },
           }}>
           {() => {
-            return <ILSContainer webcamEnabled={webcamEnabled} />;
+            return <ILSContainer />;
           }}
         </MeetingConsumer>
       </MeetingProvider>

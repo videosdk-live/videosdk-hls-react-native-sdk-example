@@ -174,9 +174,7 @@ export default function MeetingViewer({
   };
 
   usePubSub(
-    localParticipant?.id
-      ? `CHANGE_MODE_${localParticipant.id}`
-      : 'CHANGE_MODE_PENDING',
+    `CHANGE_MODE_${localParticipant.id}`,
     {
       onMessageReceived: async data => {
         const {payload} = data;
