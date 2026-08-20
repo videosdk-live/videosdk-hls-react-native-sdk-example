@@ -5,7 +5,7 @@ import {ScreenShare} from '../../../assets/icons';
 import colors from '../../../styles/colors';
 import {convertRFValue} from '../../../styles/spacing';
 
-export default LocalParticipantPresenter = ({}) => {
+export default (LocalParticipantPresenter = ({}) => {
   const {disableScreenShare} = useMeeting({});
   return (
     <View
@@ -39,8 +39,12 @@ export default LocalParticipantPresenter = ({}) => {
             borderRadius: 12,
             marginVertical: 12,
           }}
-          onPress={() => {
-            disableScreenShare();
+          onPress={async () => {
+            try {
+              await disableScreenShare();
+            } catch (err) {
+              console.error('disableScreenShare failed', err);
+            }
           }}>
           <Text
             style={{
@@ -54,4 +58,4 @@ export default LocalParticipantPresenter = ({}) => {
       </View>
     </View>
   );
-};
+});

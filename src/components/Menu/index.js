@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from 'react';
 import {
   View,
   Modal,
@@ -6,8 +6,8 @@ import {
   Animated,
   PanResponder,
   Platform,
-} from "react-native";
-import styles from "./styles";
+} from 'react-native';
+import styles from './styles';
 
 class Menu extends Component {
   constructor(props) {
@@ -22,8 +22,8 @@ class Menu extends Component {
   }
 
   setModalVisible(visible, withAnimation) {
-    const { closeFunction, height } = this.props;
-    const { animatedHeight, pan } = this.state;
+    const {closeFunction, height} = this.props;
+    const {animatedHeight, pan} = this.state;
     this.setState({
       modalVisible: visible,
       animatedHeight: new Animated.Value(0),
@@ -42,20 +42,20 @@ class Menu extends Component {
     //     useNativeDriver: false,
     //   }).start(() => {
     //     pan.setValue({ x: 0, y: 0 });
-       
+
     //     if (typeof closeFunction === "function") closeFunction();
     //   });
     // }
   }
 
   createPanResponder(props) {
-    const { height } = props;
-    const { pan } = this.state;
+    const {height} = props;
+    const {pan} = this.state;
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (e, gestureState) => {
         if (gestureState.dy > 0) {
-          Animated.event([null, { dy: pan.y }], {
+          Animated.event([null, {dy: pan.y}], {
             useNativeDriver: false,
           })(e, gestureState);
         }
@@ -67,7 +67,7 @@ class Menu extends Component {
           this.setModalVisible(false);
         } else {
           Animated.spring(pan, {
-            toValue: { x: 0, y: 0 },
+            toValue: {x: 0, y: 0},
             useNativeDriver: false,
           }).start();
         }
@@ -94,9 +94,9 @@ class Menu extends Component {
       left,
       right,
       fullWidth,
-      bottom
+      bottom,
     } = this.props;
-    const { animatedHeight, pan, modalVisible } = this.state;
+    const {animatedHeight, pan, modalVisible} = this.state;
     const panStyle = {
       transform: pan.getTranslateTransform(),
     };
@@ -112,16 +112,16 @@ class Menu extends Component {
           style={[
             styles.wrapper,
             {
-              position: "absolute",
-              bottom: bottom ? bottom : Platform.OS === "android" ? 50 : 80,
+              position: 'absolute',
+              bottom: bottom ? bottom : Platform.OS === 'android' ? 50 : 80,
             },
             fullWidth && {
               flexGrow: 1,
-              flexDirection: "row",
+              flexDirection: 'row',
               marginHorizontal: 35,
             },
             placement
-              ? placement == "left"
+              ? placement == 'left'
                 ? {
                     left: left ? left : 20,
                   }
@@ -129,20 +129,18 @@ class Menu extends Component {
                     right: right ? right : 20,
                   }
               : null,
-          ]}
-        >
+          ]}>
           <Animated.View
             style={[
               panStyle,
               styles.container,
               {
-                height: "100%",
-                width: "100%",
+                height: '100%',
+                width: '100%',
                 borderRadius: radius || 10,
-                backgroundColor: menuBackgroundColor || "#F3F3F3",
+                backgroundColor: menuBackgroundColor || '#F3F3F3',
               },
-            ]}
-          >
+            ]}>
             {children}
           </Animated.View>
         </View>

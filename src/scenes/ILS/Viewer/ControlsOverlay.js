@@ -14,7 +14,6 @@ import {
 import Orientation from 'react-native-orientation-locker';
 import {useOrientation} from '../../../utils/useOrientation';
 import {usePubSub, useMeeting} from '@videosdk.live/react-native-sdk';
-import {useNavigation} from '@react-navigation/native';
 
 export default function ControlsOverlay({
   playableDuration,
@@ -24,12 +23,10 @@ export default function ControlsOverlay({
   seekTo,
   setisChatVisible,
   isChatVisible,
+  onRequestLeave,
 }) {
-  const navigation = useNavigation();
-  const {leave} = useMeeting({});
-
   const {participants} = useMeeting({});
-  const {publish} = usePubSub('RAISE_HAND');
+  const {publish} = usePubSub('RAISE_HAND', {}, {});
 
   const [hideOverlay, setHideOverlay] = useState(false);
 
@@ -76,8 +73,7 @@ export default function ControlsOverlay({
               }}>
               <TouchableOpacity
                 onPress={() => {
-                  leave();
-                  navigation.goBack();
+                  onRequestLeave?.();
                 }}
                 style={{
                   height: 30,
@@ -130,9 +126,12 @@ export default function ControlsOverlay({
                   flexDirection: 'row',
                 }}>
                 <TouchableOpacity
-                  onPress={() => {
-                    // publish();
-                    publish('SAMPLE_MESG');
+                  onPress={async () => {
+                    try {
+                      await publish('SAMPLE_MESG');
+                    } catch (err) {
+                      console.error('publish raise-hand failed', err);
+                    }
                   }}
                   style={{
                     height: 40,

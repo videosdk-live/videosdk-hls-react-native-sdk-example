@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
   View,
   Platform,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import TextInputContainer from '../../../components/TextInputContainer';
 import Button from '../../../components/Button';
 import colors from '../../../styles/colors';
@@ -15,15 +15,19 @@ import {getToken} from '../../../api/api';
 
 export default function Viewer_Home({navigation}) {
   const [name, setName] = useState('');
-  const [meetingId, setMeetingId] = useState('lv95-q3kl-p544');
+  const [meetingId, setMeetingId] = useState('xxxx-xxxx-xxxx');
   const [token, setToken] = useState('');
 
-  React.useEffect(async () => {
-    navigation.setOptions({
-      title: 'Join as a viewer',
-    });
-    const token = await getToken();
-    setToken(token);
+  useEffect(() => {
+    navigation.setOptions({title: 'Join as a viewer'});
+    (async () => {
+      try {
+        const t = await getToken();
+        setToken(t);
+      } catch (err) {
+        console.error('token fetch failed', err);
+      }
+    })();
   }, [navigation]);
 
   const naviagateToViewer = () => {
@@ -31,7 +35,7 @@ export default function Viewer_Home({navigation}) {
       name,
       token,
       meetingId,
-      mode: 'VIEWER',
+      mode: 'RECV_ONLY',
     });
   };
 

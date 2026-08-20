@@ -3,11 +3,11 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Text,
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Video from 'react-native-video';
 import ChatViewer from '../Components/ChatViewer';
 import {Cancel, HourGlass, Stop} from '../../../assets/icons';
@@ -16,14 +16,13 @@ import colors from '../../../styles/colors';
 import {convertRFValue} from '../../../styles/spacing';
 import {usePubSub, useMeeting} from '@videosdk.live/react-native-sdk';
 import ControlsOverlay from './ControlsOverlay';
-import {useNavigation} from '@react-navigation/native';
 
 export default function ViewerContainer({
   localParticipantId,
   setlocalParticipantMode,
+  onRequestLeave,
 }) {
-  const navigation = useNavigation();
-  const {changeMode, leave, hlsState, hlsUrls} = useMeeting();
+  const {changeMode, hlsState, hlsUrls} = useMeeting();
   const deviceOrientation = useOrientation();
   const [progress, setProgrss] = useState(0);
   const [playableDuration, setplayableDuration] = useState(0);
@@ -40,14 +39,18 @@ export default function ViewerContainer({
       videoPlayer.current.seek(sec);
   };
 
-  usePubSub(`CHANGE_MODE_${localParticipantId}`, {
-    onMessageReceived: data => {
-      const {message, senderName} = data;
-      if (message.mode === 'CONFERENCE') {
-        showAlert(senderName);
-      }
+  usePubSub(
+    `CHANGE_MODE_${localParticipantId}`,
+    {
+      onMessageReceived: data => {
+        const {payload, senderName} = data;
+        if (payload?.mode === 'SEND_AND_RECV') {
+          showAlert(senderName);
+        }
+      },
     },
-  });
+    {},
+  );
 
   const showAlert = senderName => {
     Alert.alert(
@@ -61,9 +64,13 @@ export default function ViewerContainer({
         },
         {
           text: 'Accept',
-          onPress: () => {
-            changeMode('CONFERENCE');
-            setlocalParticipantMode('CONFERENCE');
+          onPress: async () => {
+            try {
+              await changeMode('SEND_AND_RECV');
+              setlocalParticipantMode('SEND_AND_RECV');
+            } catch (err) {
+              console.error('changeMode failed', err);
+            }
           },
         },
       ],
@@ -98,6 +105,7 @@ export default function ViewerContainer({
               const {duration} = data;
               setplayableDuration(duration);
             }}
+            disableAudioSessionManagement={true}
           />
           <ControlsOverlay
             playableDuration={playableDuration}
@@ -109,6 +117,7 @@ export default function ViewerContainer({
             }}
             isChatVisible={isChatVisible}
             setisChatVisible={setisChatVisible}
+            onRequestLeave={onRequestLeave}
           />
         </View>
         {isChatVisible ? (
@@ -151,6 +160,7 @@ export default function ViewerContainer({
               const {duration} = data;
               setplayableDuration(duration);
             }}
+            disableAudioSessionManagement={true}
           />
           <ControlsOverlay
             playableDuration={playableDuration}
@@ -160,6 +170,7 @@ export default function ViewerContainer({
             seekTo={sec => {
               seekTo(sec);
             }}
+            onRequestLeave={onRequestLeave}
           />
         </View>
         <View
@@ -203,8 +214,7 @@ export default function ViewerContainer({
         </Text>
         <TouchableOpacity
           onPress={() => {
-            leave();
-            navigation.goBack();
+            onRequestLeave?.();
           }}
           style={{
             height: 30,
@@ -252,8 +262,7 @@ export default function ViewerContainer({
         </Text>
         <TouchableOpacity
           onPress={() => {
-            leave();
-            navigation.goBack();
+            onRequestLeave?.();
           }}
           style={{
             height: 30,

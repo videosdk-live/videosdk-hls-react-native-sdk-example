@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, Text} from 'react-native';
 import {
   useParticipant,
@@ -31,13 +31,16 @@ export default function ParticipantView({participantId, quality}) {
     isLocal,
     setQuality,
     isActiveSpeaker,
-  } = useParticipant(participantId, {});
-
-  useEffect(() => {
-    if (quality) {
-      setQuality(quality);
-    }
-  }, [quality]);
+  } = useParticipant(participantId, {
+    onStreamEnabled: async stream => {
+      if (isLocal || stream?.kind !== 'video') return;
+      try {
+        await setQuality(quality || 'high');
+      } catch (err) {
+        console.error('setQuality failed', err);
+      }
+    },
+  });
 
   const MicStatusComponent = () => {
     return (

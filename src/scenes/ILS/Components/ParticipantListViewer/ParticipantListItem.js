@@ -36,7 +36,7 @@ function ParticipantListItem({participantId}) {
     );
   };
 
-  const {publish} = usePubSub(`CHANGE_MODE_${participantId}`, {});
+  const {publish} = usePubSub(`CHANGE_MODE_${participantId}`, {}, {});
 
   return (
     <View
@@ -78,7 +78,7 @@ function ParticipantListItem({participantId}) {
             }}>
             {isLocal ? 'You' : displayName || ''}
           </Text>
-          {mode === 'CONFERENCE' ? (
+          {mode === 'SEND_AND_RECV' ? (
             <Text
               style={{
                 backgroundColor: '#5568FE',
@@ -126,12 +126,14 @@ function ParticipantListItem({participantId}) {
           }}
         />
 
-        {!isLocal && mode == 'CONFERENCE' ? (
+        {!isLocal && mode == 'SEND_AND_RECV' ? (
           <TouchableOpacity
-            onPress={() => {
-              publish({
-                mode: 'VIEWER',
-              });
+            onPress={async () => {
+              try {
+                await publish('CHANGE_MODE', undefined, {mode: 'RECV_ONLY'});
+              } catch (err) {
+                console.error('publish change-mode failed', err);
+              }
             }}
             style={{
               height: 36,
@@ -144,12 +146,16 @@ function ParticipantListItem({participantId}) {
             }}>
             <PersonRemove fill={colors.primary[100]} />
           </TouchableOpacity>
-        ) : !isLocal && mode == 'VIEWER' ? (
+        ) : !isLocal && mode == 'RECV_ONLY' ? (
           <TouchableOpacity
-            onPress={() => {
-              publish({
-                mode: 'CONFERENCE',
-              });
+            onPress={async () => {
+              try {
+                await publish('CHANGE_MODE', undefined, {
+                  mode: 'SEND_AND_RECV',
+                });
+              } catch (err) {
+                console.error('publish change-mode failed', err);
+              }
             }}
             style={{
               height: 36,

@@ -1,93 +1,75 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   FlatList,
   Text,
+  KeyboardAvoidingView,
+  Platform,
   Linking,
-  SafeAreaView,
-  TouchableOpacity,
 } from 'react-native';
 import TextInputContainer from './TextInput';
-import {useMeeting} from '@videosdk.live/react-native-sdk';
+import {useMeeting, usePubSub} from '@videosdk.live/react-native-sdk';
 import Hyperlink from 'react-native-hyperlink';
 import moment from 'moment';
-import {usePubSub} from '@videosdk.live/react-native-sdk';
 import colors from '../../../../styles/colors';
-import {convertRFValue, useStandardHeight} from '../../../../styles/spacing';
-import {RaiseHand} from '../../../../assets/icons';
+import {convertRFValue} from '../../../../styles/spacing';
 
-const ChatViewer = ({raiseHandVisible}) => {
-  const mpubsubRef = useRef();
-  const vertical_40 = useStandardHeight(40);
-
+const ChatViewer = () => {
   const mpubsub = usePubSub('CHAT', {});
-  const {publish} = usePubSub('RAISE_HAND');
-
-  useEffect(() => {
-    mpubsubRef.current = mpubsub;
-  }, [mpubsub]);
-
   const mMeeting = useMeeting({});
   const localParticipantId = mMeeting?.localParticipant?.id;
 
   const [message, setMessage] = useState('');
+  const flatListRef = useRef();
 
-  const flatListRef = React.useRef();
-  const [isSending, setIsSending] = useState(false);
-
-  const sendMessage = () => {
-    mpubsub.publish(message, {persist: true});
-    setMessage('');
-    setTimeout(() => {
-      scrollToBottom();
-    }, 100);
-  };
   const scrollToBottom = () => {
-    // flatListRef.current.scrollToEnd({animated: true});
+    flatListRef.current?.scrollToEnd({animated: true});
+  };
+
+  const sendMessage = async () => {
+    if (!message) return;
+    try {
+      await mpubsub.publish(message, {persist: true});
+      setMessage('');
+      setTimeout(scrollToBottom, 100);
+    } catch (err) {
+      console.error('Failed to publish chat message:', err);
+    }
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-      }}>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          justifyContent: 'flex-end',
-        }}>
-        <View
+    <View style={{flex: 1}}>
+      <View style={{marginTop: 12, alignItems: 'center'}}>
+        <Text
           style={{
-            marginLeft: 12,
-            marginVertical: 12,
+            fontSize: 18,
+            color: colors.primary[100],
+            fontWeight: 'bold',
           }}>
-          <Text
-            style={{
-              fontSize: 18,
-              color: colors.primary[100],
-              fontWeight: 'bold',
-            }}>
-            Chat
-          </Text>
-        </View>
+          Chat
+        </Text>
+      </View>
+      <KeyboardAvoidingView
+        enabled
+        behavior={Platform.OS === 'android' ? undefined : 'position'}
+        style={{flex: 1, justifyContent: 'flex-end'}}>
         {mpubsub.messages ? (
           <FlatList
             ref={flatListRef}
             data={mpubsub.messages}
             showsVerticalScrollIndicator={false}
-            renderItem={({item, i}) => {
-              const {message, senderId, timestamp, senderName} = item;
+            keyExtractor={item => item.id}
+            renderItem={({item}) => {
+              const {message: text, senderId, timestamp, senderName} = item;
               const localSender = localParticipantId === senderId;
               const time = moment(timestamp).format('hh:mm a');
               return (
                 <View
-                  key={i}
                   style={{
                     backgroundColor: colors.primary[600],
                     paddingVertical: 8,
                     paddingHorizontal: 10,
                     marginVertical: 6,
-                    borderRadius: 4,
                     borderRadius: 10,
                     marginHorizontal: 12,
                     alignSelf: localSender ? 'flex-end' : 'flex-start',
@@ -105,11 +87,8 @@ const ChatViewer = ({raiseHandVisible}) => {
                     onPress={url => Linking.openURL(url)}
                     linkStyle={{color: 'blue'}}>
                     <Text
-                      style={{
-                        fontSize: convertRFValue(14),
-                        color: 'white',
-                      }}>
-                      {message}
+                      style={{fontSize: convertRFValue(14), color: 'white'}}>
+                      {text}
                     </Text>
                   </Hyperlink>
                   <Text
@@ -124,48 +103,19 @@ const ChatViewer = ({raiseHandVisible}) => {
                 </View>
               );
             }}
-            keyExtractor={(item, index) => `${index}_message_list`}
-            style={{
-              marginVertical: 5,
-            }}
+            style={{marginVertical: 5}}
           />
         ) : null}
-        <View
-          style={{
-            paddingHorizontal: 12,
-            flexDirection: 'row',
-          }}>
-          <View
-            style={{
-              flex: 1,
-            }}>
-            <TextInputContainer
-              message={message}
-              setMessage={setMessage}
-              isSending={isSending}
-              sendMessage={sendMessage}
-            />
-          </View>
-          {raiseHandVisible ? (
-            <TouchableOpacity
-              onPress={() => {
-                publish('MESSAGE');
-              }}
-              style={{
-                height: vertical_40,
-                backgroundColor: colors.primary[600],
-                borderRadius: 10,
-                aspectRatio: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginLeft: 8,
-              }}>
-              <RaiseHand fill={'#fff'} height={30} width={30} />
-            </TouchableOpacity>
-          ) : null}
+        <View style={{paddingHorizontal: 12}}>
+          <TextInputContainer
+            message={message}
+            setMessage={setMessage}
+            sendMessage={sendMessage}
+          />
         </View>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     </View>
   );
 };
+
 export default ChatViewer;
