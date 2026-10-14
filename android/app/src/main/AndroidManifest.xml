@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -39,19 +40,5 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
-         <meta-data
-      android:name="live.videosdk.rnfgservice.notification_channel_name"
-      android:value="Meeting Notification"
-     />
-    <meta-data
-    android:name="live.videosdk.rnfgservice.notification_channel_description"
-    android:value="Whenever meeting started notification will appear."
-    />
-    <meta-data
-    android:name="live.videosdk.rnfgservice.notification_color"
-    android:resource="@color/red"
-    />
-    <service android:name="live.videosdk.rnfgservice.ForegroundService" android:foregroundServiceType="mediaProjection"></service>
-    <service android:name="live.videosdk.rnfgservice.ForegroundServiceTask"></service>
     </application>
 </manifest>

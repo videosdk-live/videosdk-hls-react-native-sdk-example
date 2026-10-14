@@ -13,7 +13,7 @@ import {
 } from '../../../assets/icons';
 import Orientation from 'react-native-orientation-locker';
 import {useOrientation} from '../../../utils/useOrientation';
-import {usePubSub, useMeeting} from '@videosdk.live/react-native-sdk';
+import {usePubSub, useRoom} from '@videosdk.live/react-native-sdk';
 
 export default function ControlsOverlay({
   playableDuration,
@@ -25,7 +25,7 @@ export default function ControlsOverlay({
   isChatVisible,
   onRequestLeave,
 }) {
-  const {participants} = useMeeting({});
+  const {participants} = useRoom({});
   const {publish} = usePubSub('RAISE_HAND', {}, {});
 
   const [hideOverlay, setHideOverlay] = useState(false);

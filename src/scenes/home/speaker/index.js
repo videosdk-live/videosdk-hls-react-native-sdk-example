@@ -1,4 +1,9 @@
-import {RTCView, mediaDevices} from '@videosdk.live/react-native-sdk';
+import {
+  Constants,
+  RTCView,
+  createCameraVideoTrack,
+  useMediaDevice,
+} from '@videosdk.live/react-native-sdk';
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -48,26 +53,26 @@ export default function Speaker_Home({navigation, route}) {
     })();
   }, [navigation, isCreator]);
 
+  const {requestPermission} = useMediaDevice();
+
   useFocusEffect(
     React.useCallback(() => {
-      mediaDevices
-        .getUserMedia({audio: false, video: true})
-        .then(stream => {
-          setTrack(stream);
-        })
-        .catch(e => {
+      (async () => {
+        try {
+          // 2.0.0 does not prompt for camera and mic itself; ask before opening the preview
+          await requestPermission(Constants.permission.AUDIO_AND_VIDEO);
+          setTrack(await createCameraVideoTrack({facingMode: 'front'}));
+        } catch (e) {
           console.log(e);
-        });
+        }
+      })();
     }, []),
   );
 
+  // Frees the preview camera so the meeting can open it
   const disposeVideoTrack = () => {
-    setTrack(stream => {
-      stream.getTracks().forEach(track => {
-        track.enabled = false;
-        return track;
-      });
-    });
+    if (tracks) tracks.stop();
+    setTrack('');
   };
 
   const naviagateToSpeaker = () => {
@@ -117,7 +122,7 @@ export default function Speaker_Home({navigation, route}) {
                   <RTCView
                     streamURL={tracks.toURL()}
                     objectFit={'cover'}
-                    mirror={true}
+                    setMirror={true}
                     style={{
                       flex: 1,
                       borderRadius: 20,

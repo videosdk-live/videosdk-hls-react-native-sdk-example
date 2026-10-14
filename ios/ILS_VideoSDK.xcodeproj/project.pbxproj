@@ -10,8 +10,6 @@
 		00E356F31AD99517003FC87E /* ILS_VideoSDKTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ILS_VideoSDKTests.mm */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		6DEF442529CACD23003BC578 /* VideosdkRPK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF442429CACD23003BC578 /* VideosdkRPK.swift */; };
-		6DEF442729CACD48003BC578 /* VideosdkRPK.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF442629CACD48003BC578 /* VideosdkRPK.mm */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		885BC74E29CB134700D2EA00 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DEF440C29CACB6D003BC578 /* ReplayKit.framework */; };
 		885BC75129CB134700D2EA00 /* SampleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885BC75029CB134700D2EA00 /* SampleHandler.swift */; };
@@ -71,8 +69,6 @@
 		6DEF440C29CACB6D003BC578 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		6DEF442129CACC0F003BC578 /* ILS_VideoSDK.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ILS_VideoSDK.entitlements; path = ILS_VideoSDK/ILS_VideoSDK.entitlements; sourceTree = "<group>"; };
 		6DEF442329CACD23003BC578 /* ILS_VideoSDK-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ILS_VideoSDK-Bridging-Header.h"; sourceTree = "<group>"; };
-		6DEF442429CACD23003BC578 /* VideosdkRPK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideosdkRPK.swift; sourceTree = "<group>"; };
-		6DEF442629CACD48003BC578 /* VideosdkRPK.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VideosdkRPK.mm; sourceTree = "<group>"; };
 		7EC3921C9C6FAA31EA824575 /* Pods-ILS_VideoSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ILS_VideoSDK.debug.xcconfig"; path = "Target Support Files/Pods-ILS_VideoSDK/Pods-ILS_VideoSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ILS_VideoSDK/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		885BC74729CB112A00D2EA00 /* ILS_VideoSDKRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ILS_VideoSDKRelease.entitlements; path = ILS_VideoSDK/ILS_VideoSDKRelease.entitlements; sourceTree = "<group>"; };
@@ -143,9 +139,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-				6DEF442429CACD23003BC578 /* VideosdkRPK.swift */,
 				6DEF442329CACD23003BC578 /* ILS_VideoSDK-Bridging-Header.h */,
-				6DEF442629CACD48003BC578 /* VideosdkRPK.mm */,
 				0DA91DA0494FD21AFAC70717 /* PrivacyInfo.xcprivacy */,
 			);
 			name = ILS_VideoSDK;
@@ -516,9 +510,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DEF442529CACD23003BC578 /* VideosdkRPK.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.swift in Sources */,
-				6DEF442729CACD48003BC578 /* VideosdkRPK.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -668,6 +660,7 @@
 					"\"$(SRCROOT)/../node_modules/@videosdk.live/react-native-incall-manager/ios/RNInCallManager\"",
 				);
 				INFOPLIST_FILE = ILS_VideoSDK/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -749,6 +742,7 @@
 					"\"$(SRCROOT)/../node_modules/@videosdk.live/react-native-incall-manager/ios/RNInCallManager\"",
 				);
 				INFOPLIST_FILE = ILS_VideoSDK/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -816,7 +810,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -890,7 +884,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",

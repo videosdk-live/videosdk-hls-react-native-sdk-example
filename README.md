@@ -35,17 +35,17 @@ At Video SDK, we’re building tools to help companies create world-class collab
 
 ## Prerequisites
 
-- React Native 0.59.10 or later
-- Node 10 or later
+- React Native 0.74 or later (this sample uses 0.87)
+- Node 22.11 or later
 - Valid Video SDK [Account](https://app.videosdk.live/)
 - For Android
-  - Java Development Kit (JDK) 8 or later
+  - Java Development Kit (JDK) 17 or later
   - Android Studio (latest version recommended)
-  - A physical or virtual mobile device running Android 5.0 or later
+  - A physical or virtual mobile device running Android 7.0 (API 24) or later, arm64
 - For iOS
-  - Xcode 9.4 or later
+  - Xcode 16 or later
   - CocoaPods
-  - A physical or virtual mobile device running iOS 9.0 or later
+  - A physical or virtual mobile device running iOS 18.0 or later
 
 ## Run the Sample Project
 
@@ -96,9 +96,9 @@ npm ios
 - `Stream` - Stream means video or audio media content that is either published by `local participant` or `remote participants`.
 - `Mode` - There are 2 types of modes:
 
-  `CONFERENCE`: Both audio and video streams will be produced and consumed in this mode.
+  `SEND_AND_RECV`: Both audio and video streams will be produced and consumed in this mode.
 
-  `VIEWER`: Audio and video streams will not be produced or consumed in this mode.
+  `RECV_ONLY`: Audio and video streams will not be produced in this mode, only consumed.
 
 <br/>
 
@@ -169,24 +169,20 @@ Token is used to create and validate a meeting using API and also initialise a m
 
 ## [Initialize a Meeting](https://docs.videosdk.live/react-native/api/sdk-reference/meeting-provider)
 
-- You can initialize the meeting using `MeetingProvider`. Meeting Provider simplifies configuration of meeting with by wrapping up core logic with `react-context`.
+- You can initialize the meeting using `RoomProvider`. Room Provider simplifies configuration of meeting with by wrapping up core logic with `react-context`.
 
 ```js
-<MeetingProvider
+<RoomProvider
   config={{
-    meetingId: 'meeting-id',
+    roomId: 'meeting-id',
     micEnabled: true,
-    webcamEnabled: true,
-    name: 'Participant Name',
-    notification: {
-      title: 'Code Sample',
-      message: 'Meeting is running.',
-    },
+    camEnabled: true,
+    participantName: 'Participant Name',
     participantId: 'xyz',
-    // For Interactive Live Streaming we can provide mode, `CONFERENCE` for Speaker and  `VIEWER` for viewer audience.
-    mode: 'CONFERENCE', // "CONFERENCE" || "VIEWER"
+    // For Interactive Live Streaming, `SEND_AND_RECV` is a speaker and `RECV_ONLY` a viewer.
+    mode: 'SEND_AND_RECV', // "SEND_AND_RECV" || "RECV_ONLY"
   }}
-  token={'token'}></MeetingProvider>
+  token={'token'}></RoomProvider>
 ```
 
 <br/>
@@ -194,7 +190,7 @@ Token is used to create and validate a meeting using API and also initialise a m
 ## [Mute/Unmute Local Audio](https://docs.videosdk.live/javascript/guide/video-and-audio-calling-api-sdk/features/mic-controls)
 
 ```js
-const {unmuteMic, muteMic} = useMeeting();
+const {unmuteMic, muteMic} = useRoom();
 
 const onPress = async () => {
   // Enable Mic in Meeting
@@ -209,29 +205,31 @@ const onPress = async () => {
 
 ## [Change Audio Device](https://docs.videosdk.live/react-native/guide/video-and-audio-calling-api-sdk/features/switch-audio-output)
 
-- The `getAudioDeviceList()` function allows a participant to list all of the attached audio devices (e.g., Bluetooth and Earphone).
+- The `getMics()` function of `useMediaDevice()` lists all of the attached audio devices (e.g., Bluetooth and Earphone).
 
 ```js
-import {getAudioDeviceList} from '@videosdk.live/react-native-sdk';
+import {useMediaDevice} from '@videosdk.live/react-native-sdk';
+
+const {getMics} = useMediaDevice();
 
 const onPress = async () => {
-  const device = await getAudioDeviceList();
-  console.log('Device :', device); // ["SPEAKER_PHONE","WIRED_HEADSET"]
+  const devices = await getMics();
+  console.log('Devices :', devices); // [{deviceId, label, kind}, ...]
 };
 ```
 
-- Local participant can change the audio device using `switchAudioDevice()` method of `Room` class.
+- After joining, the local participant can change the audio device using `setAudioDevice()` from `useRoom()`.
 
 ```js
-import {switchAudioDevice} from '@videosdk.live/react-native-sdk';
+const {setAudioDevice} = useRoom();
 
-switchAudioDevice('SPEAKER_PHONE'); // for device speaker
+setAudioDevice('SPEAKER_PHONE'); // for device speaker
 
-switchAudioDevice('EARPIECE'); // for device earpiece
+setAudioDevice('EARPIECE'); // for device earpiece
 
-switchAudioDevice('WIRED_HEADSET'); // for wired headset
+setAudioDevice('WIRED_HEADSET'); // for wired headset
 
-switchAudioDevice('BLUETOOTH'); // for bluetooth device
+setAudioDevice('BLUETOOTH'); // for bluetooth device
 ```
 
 - Please consult our documentation [Change Audio Device](https://docs.videosdk.live/react-native/guide/video-and-audio-calling-api-sdk/features/switch-audio-output) for more infromation.
@@ -241,13 +239,13 @@ switchAudioDevice('BLUETOOTH'); // for bluetooth device
 ## [Enable/Disable Local Webcam](https://docs.videosdk.live/react-native/guide/video-and-audio-calling-api-sdk/features/camera-controls)
 
 ```js
-const {enableWebcam, disableWebcam} = useMeeting();
+const {enableCam, disableCam} = useRoom();
 const onPress = async () => {
   // Enable Webcam in Meeting
-  enableWebcam();
+  enableCam();
 
   // Disable Webcam in Meeting
-  disableWebcam();
+  disableCam();
 };
 ```
 
@@ -256,14 +254,15 @@ const onPress = async () => {
 ## [Switch Local Webcam](https://docs.videosdk.live/react-native/guide/video-and-audio-calling-api-sdk/features/camera-controls)
 
 ```js
-const {changeWebcam, getWebcams} = useMeeting();
+const {changeCam} = useRoom();
+const {getCameras} = useMediaDevice();
 const onPress = async () => {
   // Change Webcam in Meeting
-  const webcams = await getWebcams(); // returns all webcams
+  const cameras = await getCameras(); // returns all cameras
 
-  const {deviceId, label} = webcams[0]; // 0th : Rear Cam, 1st : Front Cam
+  const {deviceId} = cameras.find(camera => camera.facingMode === 'back');
 
-  changeWebcam(deviceId);
+  changeCam(deviceId);
 };
 ```
 
@@ -274,14 +273,14 @@ const onPress = async () => {
 - If you want to change the mode of a participant, use the meeting's `changeMode()` method.
 
 ```js
-const {changeMode} = useMeeting();
+const {changeMode} = useRoom();
 
 const toggleMode = () => {
   // For Viewer
-  changeMode('VIEWER');
+  changeMode('RECV_ONLY');
 
   // For Speaker
-  changeMode('CONFERENCE');
+  changeMode('SEND_AND_RECV');
 };
 ```
 
@@ -290,7 +289,7 @@ const toggleMode = () => {
 ## [Start/Stop HLS](https://docs.videosdk.live/react-native/api/sdk-reference/use-meeting/methods#starthls)
 
 ```js
-const {startHls, stopHls} = useMeeting({});
+const {startHLS, stopHLS} = useRoom({});
 
 const config = {
   // Layout Configuration
@@ -316,10 +315,10 @@ const config = {
 };
 
 // start HLS
-startHls(config);
+startHLS(config);
 
 // stop HLS
-stopHls();
+stopHLS();
 ```
 
 <br/>
@@ -369,7 +368,7 @@ const RaiseHand = () => {
 ## [Leave or End Meeting](https://docs.videosdk.live/react-native/guide/video-and-audio-calling-api-sdk/features/leave-end-meeting)
 
 ```js
-const {leave, end} = useMeeting({});
+const {leave, end} = useRoom({});
 const onPress = () => {
   // Only one participant will leave/exit the meeting; the rest of the participants will remain.
   leave();
@@ -386,7 +385,7 @@ const onPress = () => {
 By registering callback handlers, VideoSDK sends callbacks to the client app whenever there is a change or update in the meeting after a user joins.
 
 ```js
-import { Constants, useMeeting } from "@videosdk.live/react-native-sdk";
+import { Constants, useRoom } from "@videosdk.live/react-native-sdk";
 
 function onParticipantJoined(participant) {
   // This event will be emitted when a new participant joined the meeting.
@@ -408,42 +407,42 @@ function onPresenterChanged(presenterId) {
   // [presenterId] : Id of active speaker
   console.log('onPresenterChanged', presenterId);
 }
-function onMeetingJoined() {
+function onRoomJoined() {
   // This event will be emitted when a localParticipant(you) successfully joined the meeting.
-  console.log('onMeetingJoined');
+  console.log('onRoomJoined');
 }
-function onMeetingLeft() {
+function onRoomLeft() {
   // This event will be emitted when a localParticipant(you) left the meeting.
-  console.log('onMeetingLeft');
+  console.log('onRoomLeft');
 }
 
 function onHlsStateChanged(data) {
-   const { status } = data;
+  const { state, hlsUrl } = data;
 
-  if (status === Constants.hlsEvents.HLS_STARTING) {
+  if (state === Constants.hlsEvents.HLS_STARTING) {
     console.log("Meeting Hls is starting");
-  } else if (status === Constants.hlsEvents.HLS_STARTED) {
+  } else if (state === Constants.hlsEvents.HLS_STARTED) {
     console.log("Meeting Hls is started");
-  } else if (status === Constants.hlsEvents.HLS_PLAYABLE) {
+  } else if (state === Constants.hlsEvents.HLS_PLAYABLE) {
     // on hlsStateChanged started you will receive playbackHlsUrl
-    const {playbackHlsUrl}=data;
+    const { playbackHlsUrl } = hlsUrl;
     console.log("Meeting Hls is playable");
-  } else if (status === Constants.hlsEvents.HLS_STOPPING) {
+  } else if (state === Constants.hlsEvents.HLS_STOPPING) {
     console.log("Meeting Hls is stopping");
-  } else if (status === Constants.hlsEvents.HLS_STOPPED) {
+  } else if (state === Constants.hlsEvents.HLS_STOPPED) {
     console.log("Meeting Hls is stopped");
   } else {
     //
   }
  }
 
-const {meetingId, meeting, localParticipant} = useMeeting({
+const {roomId, room, localParticipant} = useRoom({
   onParticipantJoined,
   onParticipantLeft,
   onSpeakerChanged,
   onPresenterChanged,
-  onMeetingJoined,
-  onMeetingLeft,
+  onRoomJoined,
+  onRoomLeft,
   onHlsStateChanged,
 });
 ```

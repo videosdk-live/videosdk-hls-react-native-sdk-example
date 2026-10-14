@@ -2,8 +2,8 @@ import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import colors from '../../styles/colors';
 import {
-  MeetingProvider,
-  MeetingConsumer,
+  RoomProvider,
+  RoomConsumer,
 } from '@videosdk.live/react-native-sdk';
 import ILSContainer from './ILSContainer';
 import {SCREEN_NAMES} from '../../navigators/screenNames';
@@ -19,31 +19,27 @@ export default function Meeting({navigation, route}) {
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: colors.primary[900], padding: 12}}>
-      <MeetingProvider
+      <RoomProvider
         config={{
-          meetingId,
+          roomId: meetingId,
           micEnabled,
-          webcamEnabled,
-          name,
+          camEnabled: webcamEnabled,
+          participantName: name,
           mode, // "SEND_AND_RECV" | "SIGNALLING_ONLY" | "RECV_ONLY"
-          notification: {
-            title: 'Video SDK Meeting',
-            message: 'Meeting is running.',
-          },
           defaultCamera: 'front',
         }}
         token={token}>
-        <MeetingConsumer
+        <RoomConsumer
           {...{
-            onMeetingLeft: () => {
+            onRoomLeft: () => {
               navigation.navigate(SCREEN_NAMES.Home);
             },
           }}>
           {() => {
             return <ILSContainer />;
           }}
-        </MeetingConsumer>
-      </MeetingProvider>
+        </RoomConsumer>
+      </RoomProvider>
     </SafeAreaView>
   );
 }

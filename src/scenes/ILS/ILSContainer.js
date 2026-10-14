@@ -1,4 +1,4 @@
-import {useMeeting} from '@videosdk.live/react-native-sdk';
+import {useRoom} from '@videosdk.live/react-native-sdk';
 import React, {useEffect, useRef, useState} from 'react';
 import MeetingViewer from './Speaker/MeetingViewer';
 import WaitingToJoinView from './Components/WaitingToJoinView';
@@ -10,7 +10,7 @@ export default function ILSContainer() {
   const [localParticipantMode, setlocalParticipantMode] = useState(null);
   const [pendingAction, setPendingAction] = useState(null);
 
-  const mMeeting = useMeeting({});
+  const mMeeting = useRoom({});
 
   const mMeetingRef = useRef();
   const joinedRef = useRef(false);
@@ -20,7 +20,7 @@ export default function ILSContainer() {
     mMeetingRef.current = mMeeting;
   }, [mMeeting]);
 
-  const {join, leave, end, participants, localParticipant} = useMeeting({
+  const {join, leave, end, participants, localParticipant} = useRoom({
     onParticipantModeChanged: async ({mode, participantId}) => {
       const local = mMeetingRef.current?.localParticipant;
       if (!local || participantId !== local.id) return;
@@ -35,7 +35,7 @@ export default function ILSContainer() {
         console.error('participant mode change failed', err);
       }
     },
-    onMeetingJoined: async () => {
+    onRoomJoined: async () => {
       joinedRef.current = true;
       const local = mMeetingRef.current?.localParticipant;
       try {
@@ -49,7 +49,7 @@ export default function ILSContainer() {
         setJoined(true);
       }, 500);
     },
-    onMeetingLeft: () => {
+    onRoomLeft: () => {
       joinedRef.current = false;
       hasLeftRef.current = true;
     },

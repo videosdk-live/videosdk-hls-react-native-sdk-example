@@ -4,10 +4,13 @@ import {
   Text,
   Clipboard,
   TouchableOpacity,
-  Platform,
   Dimensions,
 } from 'react-native';
-import {useMeeting, usePubSub} from '@videosdk.live/react-native-sdk';
+import {
+  createScreenShareVideoTrack,
+  useRoom,
+  usePubSub,
+} from '@videosdk.live/react-native-sdk';
 import {
   CallEnd,
   Chat,
@@ -29,7 +32,6 @@ import MenuItem from '../Components/MenuItem';
 import BottomSheet from '../../../components/BottomSheet';
 import ParticipantListViewer from '../Components/ParticipantListViewer';
 import RemoteParticipantPresenter from './RemoteParticipantPresenter';
-import VideosdkRPK from '../../../../VideosdkRPK';
 import Toast from 'react-native-simple-toast';
 import {MemoizedParticipantGrid} from './ParticipantGrid';
 import {useOrientation} from '../../../utils/useOrientation';
@@ -46,22 +48,21 @@ export default function MeetingViewer({
     localParticipant,
     participants,
     pinnedParticipants,
-    localWebcamOn,
-    localMicOn,
-    toggleWebcam,
+    isCamEnabled,
+    isMicEnabled,
+    toggleCam,
     toggleMic,
     presenterId,
-    localScreenShareOn,
-    toggleScreenShare,
-    meetingId,
+    isScreenSharing,
+    roomId,
     activeSpeakerId,
     changeMode,
     hlsState,
-    startHls,
-    stopHls,
+    startHLS,
+    stopHLS,
     enableScreenShare,
     disableScreenShare,
-  } = useMeeting({
+  } = useRoom({
     onError: data => {
       const {code, message} = data;
       Toast.show(`Error: ${code}: ${message}`);
@@ -107,7 +108,7 @@ export default function MeetingViewer({
     activeSpeakerId,
     pinnedParticipants,
     presenterId,
-    localScreenShareOn,
+    isScreenSharing,
   ]);
 
   useEffect(() => {
@@ -131,30 +132,10 @@ export default function MeetingViewer({
     {},
   );
 
-  useEffect(() => {
-    if (Platform.OS == 'ios') {
-      VideosdkRPK.addListener('onScreenShare', async event => {
-        try {
-          if (event === 'START_BROADCAST') {
-            await enableScreenShare();
-          } else if (event === 'STOP_BROADCAST') {
-            await disableScreenShare();
-          }
-        } catch (err) {
-          console.error('screen share toggle failed', err);
-        }
-      });
-
-      return () => {
-        VideosdkRPK.removeAllListeners('onScreenShare');
-      };
-    }
-  }, []);
-
   const _handleHLS = async () => {
     try {
       if (!hlsState || hlsState === 'HLS_STOPPED') {
-        await startHls({
+        await startHLS({
           layout: {
             type: 'SPOTLIGHT',
             priority: 'PIN',
@@ -166,7 +147,7 @@ export default function MeetingViewer({
           mode: 'video-and-audio',
         });
       } else if (hlsState === 'HLS_PLAYABLE') {
-        await stopHls();
+        await stopHLS();
       }
     } catch (err) {
       console.error('HLS toggle failed', err);
@@ -219,7 +200,7 @@ export default function MeetingViewer({
                 fontSize: 16,
                 color: colors.primary[100],
               }}>
-              {meetingId ? meetingId : 'xxx - xxx - xxx'}
+              {roomId ? roomId : 'xxx - xxx - xxx'}
             </Text>
 
             <TouchableOpacity
@@ -228,7 +209,7 @@ export default function MeetingViewer({
                 marginLeft: 10,
               }}
               onPress={() => {
-                Clipboard.setString(meetingId);
+                Clipboard.setString(roomId);
                 Toast.show('Meeting Id copied Successfully');
               }}>
               <Copy fill={colors.primary[100]} width={18} height={18} />
@@ -332,9 +313,9 @@ export default function MeetingViewer({
           flexDirection: orientation == 'PORTRAIT' ? 'column' : 'row',
           marginVertical: 12,
         }}>
-        {presenterId && !localScreenShareOn ? (
+        {presenterId && !isScreenSharing ? (
           <RemoteParticipantPresenter presenterId={presenterId} />
-        ) : presenterId && localScreenShareOn ? (
+        ) : presenterId && isScreenSharing ? (
           <LocalParticipantPresenter />
         ) : null}
 
@@ -391,7 +372,7 @@ export default function MeetingViewer({
             borderWidth: 1.5,
             borderColor: '#2B3034',
           }}
-          backgroundColor={!localMicOn ? colors.primary[100] : 'transparent'}
+          backgroundColor={!isMicEnabled ? colors.primary[100] : 'transparent'}
           onPress={async () => {
             try {
               await toggleMic();
@@ -400,7 +381,7 @@ export default function MeetingViewer({
             }
           }}
           Icon={() => {
-            return localMicOn ? (
+            return isMicEnabled ? (
               <MicOn height={24} width={24} fill="#FFF" />
             ) : (
               <MicOff height={28} width={28} fill="#1D2939" />
@@ -412,16 +393,16 @@ export default function MeetingViewer({
             borderWidth: 1.5,
             borderColor: '#2B3034',
           }}
-          backgroundColor={!localWebcamOn ? colors.primary[100] : 'transparent'}
+          backgroundColor={!isCamEnabled ? colors.primary[100] : 'transparent'}
           onPress={async () => {
             try {
-              await toggleWebcam();
+              await toggleCam();
             } catch (err) {
-              console.error('toggleWebcam failed', err);
+              console.error('toggleCam failed', err);
             }
           }}
           Icon={() => {
-            return localWebcamOn ? (
+            return isCamEnabled ? (
               <VideoOn height={24} width={24} fill="#FFF" />
             ) : (
               <VideoOff height={36} width={36} fill="#1D2939" />
@@ -447,12 +428,13 @@ export default function MeetingViewer({
             borderColor: '#2B3034',
           }}
           onPress={async () => {
-            if (presenterId != null && !localScreenShareOn) return;
+            if (presenterId != null && !isScreenSharing) return;
             try {
-              if (Platform.OS === 'android') {
-                await toggleScreenShare();
+              if (isScreenSharing) {
+                await disableScreenShare();
               } else {
-                VideosdkRPK.startBroadcast();
+                // iOS shows the broadcast picker, Android asks for screen-capture consent
+                await enableScreenShare(await createScreenShareVideoTrack());
               }
             } catch (err) {
               console.error('screen share toggle failed', err);

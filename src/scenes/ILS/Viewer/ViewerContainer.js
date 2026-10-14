@@ -14,7 +14,12 @@ import {Cancel, HourGlass, Stop} from '../../../assets/icons';
 import {useOrientation} from '../../../utils/useOrientation';
 import colors from '../../../styles/colors';
 import {convertRFValue} from '../../../styles/spacing';
-import {usePubSub, useMeeting} from '@videosdk.live/react-native-sdk';
+import {
+  Constants,
+  useMediaDevice,
+  usePubSub,
+  useRoom,
+} from '@videosdk.live/react-native-sdk';
 import ControlsOverlay from './ControlsOverlay';
 
 export default function ViewerContainer({
@@ -22,7 +27,8 @@ export default function ViewerContainer({
   setlocalParticipantMode,
   onRequestLeave,
 }) {
-  const {changeMode, hlsState, hlsUrls} = useMeeting();
+  const {changeMode, hlsState, hlsUrls} = useRoom();
+  const {requestPermission} = useMediaDevice();
   const deviceOrientation = useOrientation();
   const [progress, setProgrss] = useState(0);
   const [playableDuration, setplayableDuration] = useState(0);
@@ -66,6 +72,8 @@ export default function ViewerContainer({
           text: 'Accept',
           onPress: async () => {
             try {
+              // A speaker publishes camera and mic, so ask before switching mode
+              await requestPermission(Constants.permission.AUDIO_AND_VIDEO);
               await changeMode('SEND_AND_RECV');
               setlocalParticipantMode('SEND_AND_RECV');
             } catch (err) {
