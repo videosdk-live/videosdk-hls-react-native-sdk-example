@@ -218,18 +218,18 @@ const onPress = async () => {
 };
 ```
 
-- After joining, the local participant can change the audio device using `setAudioDevice()` from `useRoom()`.
+- After joining, the local participant can change the audio device using `changeMic()` from `useRoom()`, passing the `deviceId` returned by `getMics()`.
 
 ```js
-const {setAudioDevice} = useRoom();
+const {changeMic} = useRoom();
 
-setAudioDevice('SPEAKER_PHONE'); // for device speaker
+changeMic('SPEAKER_PHONE'); // for device speaker
 
-setAudioDevice('EARPIECE'); // for device earpiece
+changeMic('EARPIECE'); // for device earpiece
 
-setAudioDevice('WIRED_HEADSET'); // for wired headset
+changeMic('WIRED_HEADSET'); // for wired headset
 
-setAudioDevice('BLUETOOTH'); // for bluetooth device
+changeMic('BLUETOOTH'); // for bluetooth device
 ```
 
 - Please consult our documentation [Change Audio Device](https://docs.videosdk.live/react-native/guide/video-and-audio-calling-api-sdk/features/switch-audio-output) for more infromation.
