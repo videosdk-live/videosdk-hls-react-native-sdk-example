@@ -1928,10 +1928,10 @@ PODS:
   - SocketRocket (0.7.1):
     - ReactNativeDependencies
   - Toast (4.1.1)
-  - VideoSDKReactNative (2.0.0):
+  - VideoSDKReactNative (2.0.3):
     - React-Core
     - VideoSDKRTC
-  - VideoSDKRTC (4.0.0)
+  - VideoSDKRTC (4.0.3)
   - Yoga (0.0.0):
     - React-Core-prebuilt
 
@@ -2324,8 +2324,8 @@ SPEC CHECKSUMS:
   RNSVG: 6c9bcbf53822153be6f6c1484f6b0b57c0040d21
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
-  VideoSDKReactNative: c454687ba1845afd6c2b14f1f3f95d3d31bcead7
-  VideoSDKRTC: 7f5c4a94f64fe8c60fe4b07da9a2c87c34904422
+  VideoSDKReactNative: b6dc54f6a2433b69f08d654ce8735cc8e12c7e78
+  VideoSDKRTC: 183808436d2d2f871812e3df3c2ca1f48f798390
   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 
 PODFILE CHECKSUM: 30ed7cd760290d8c1e1a2d737f35c9f64050f86b
